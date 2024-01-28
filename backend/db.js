@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
+
 const mongoDb = async() => {
-    await mongoose.connect('mongodb+srv://og:21ucs140@cluster0.g6omsii.mongodb.net/?retryWrites=true&w=majority', async() => {
+    const uri = 'mongodb+srv://og:${process.env.DB_PASSWORD}@cluster0.g6omsii.mongodb.net/?retryWrites=true&w=majority';
+    await mongoose.connect(uri, async() => {
         console.log("connected");
     });
 }
