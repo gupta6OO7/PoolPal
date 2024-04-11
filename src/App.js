@@ -12,6 +12,7 @@ import PoolPage from './screens/PoolPage';
 import DriverHome from './screens/DriverHome';
 import DriverPage from './screens/DriverPage';
 import DriverStatus from './screens/DriverStatus';
+import Chats from './screens/Chats';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route exact path = "/dhome" element = {<DriverHome></DriverHome>}></Route>
           <Route exact path = "/dpage" element = {<DriverPage></DriverPage>}></Route>
           <Route exact path = "/dstatus" element = {<DriverStatus></DriverStatus>}></Route>
+          <Route exact path = "/chats" element = {<Chats></Chats>}></Route>
         </Routes>
       </div>
     </Router>
