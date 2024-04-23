@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 export default function PoolPage() {
 
@@ -23,22 +23,23 @@ export default function PoolPage() {
             })
     }, []);
 
-    // const joinpool = async (msgid) => {
-    //     const response = await fetch('http://localhost:5000/api/deletepoolmsg', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify({ id: msgid })
-    //     });
-    //     const json = await response.json()
-    //     if (!json.success) {
-    //         alert('Failed to join pool');
-    //     }
-    //     else {
-    //         alert('Contact mailId: ' + json.mailId);
-    //     }
-    // }
+    const joinpool = async (msgid, mailId) => {
+        const response = await fetch('http://localhost:5000/api/createchatroom', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ req_mailid: localStorage.getItem('mailId'), owner_mailid: mailId, pmsg_id: msgid})
+        });
+        const json = await response.json()
+        if (!json.success) {
+            alert('Failed to create chatroom');
+        }
+        else {
+            alert('Chatroom created');
+            navigate('/chats');
+        }
+    }
 
     return (
         <div style={{ padding: "100px" }}>
@@ -73,9 +74,9 @@ export default function PoolPage() {
                                                 {
                                                     (!localStorage.getItem('authToken')) ?
                                                         <button className="btn m-3 btn-outline-dark">Log in first</button>
-                                                        : <Link to='/chats'><button className="btn m-3 btn-outline-dark" 
-                                                        // onClick={() => joinpool(i._id)}
-                                                        >Join</button></Link>
+                                                        : <button className="btn m-3 btn-outline-dark" 
+                                                        onClick={() => joinpool(i._id, i.mailId)}
+                                                        >Join</button>
                                                 }
                                             </div>
                                         </div>

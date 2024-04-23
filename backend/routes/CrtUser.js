@@ -41,7 +41,8 @@ router.post('/createuser', [
                 usertype: req.body.usertype,
                 name: req.body.name,
                 email: req.body.email,
-                password: secPass
+                password: secPass,
+                chatids: []
             })
 
             if (req.body.usertype === 'Driver') {

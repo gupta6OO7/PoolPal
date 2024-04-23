@@ -15,6 +15,15 @@ nav{
   background-color: #000000;
 }
 
+.button-solid {
+  background-color: inherit;
+  border: none;
+}
+button-solid:focus {
+  border: none;
+  outline: none;
+}
+
 .jumbo1 {
   width: 100%;
   height: 650px;
