@@ -8,7 +8,7 @@ router.post('/statusUpdate', async (req, res) => {
     try {
 
         if(req.body.availability === 'Busy'){
-            Status.findOneAndUpdate({ mailId: req.body.mailId }, {
+            Status.findOneAndUpdate({ driverId: req.body.driverId }, {
                 availability: 'Busy'
             }, (err)=>{
                 if(err){
@@ -18,7 +18,7 @@ router.post('/statusUpdate', async (req, res) => {
         }
         
         else{
-            Status.findOneAndUpdate({ mailId: req.body.mailId }, {
+            Status.findOneAndUpdate({ driverId: req.body.driverId }, {
                 availability: 'Idle',
                 location: req.body.location,
                 vtype: req.body.vtype,

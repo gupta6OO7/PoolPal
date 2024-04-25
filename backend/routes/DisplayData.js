@@ -15,20 +15,6 @@ router.get('/getpoolmsg', async (req, res) => {
     }
 })
 
-router.post('/deletepoolmsg', async (req, res) => {
-    try {
-        let msgData = await PMsg.findOne({ _id: req.body.id });
-        PMsg.deleteOne({_id: req.body.id}, function (err, res) {
-            console.log(err);
-        });
-        res.json({ success: true, mailId: msgData.mailId });
-    }
-    catch (error) {
-        console.log(error);
-        res.json({ success: false });
-    }
-})
-
 router.get('/getdriverdata', async (req, res) => {
     try {
         const drivers = await Status.find({availability: 'Idle'});
@@ -41,7 +27,6 @@ router.get('/getdriverdata', async (req, res) => {
 
 router.post('/bookdriver', async (req, res) => {
     try {
-        let driverData = await Status.findOne({ _id: req.body.id });
         Status.findOneAndUpdate({ _id: req.body.id }, {
             availability: 'Busy',
             location: '0',
@@ -52,7 +37,7 @@ router.post('/bookdriver', async (req, res) => {
                 console.log(err);
             }
         })
-        res.json({ success: true, mailId: driverData.mailId });
+        res.json({ success: true});
     }
     catch (error) {
         console.log(error);

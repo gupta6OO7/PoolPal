@@ -6,7 +6,6 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 
 
 export default function Chats() {
-    const currEmail = localStorage.getItem('mailId');
 
     const [show, setShow] = useState(false);
     const [data, setdata] = useState([]);
@@ -15,6 +14,25 @@ export default function Chats() {
     const [curr_status, setcurr_status] = useState('');
     const [message, setmessage] = useState('');
     const [req_mailid, setreq_mailid] = useState('none');
+
+    const [userId, setuserId] = useState('');
+    const [currEmail, setcurrEmail] = useState('');
+
+    useEffect(() => {
+        async function authorize() {
+            const response = await fetch('http://localhost:5000/api/extractUserData', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ authToken: localStorage.getItem('authToken') })
+            });
+            const json = await response.json()
+            setuserId(json.userId);
+            setcurrEmail(json.userEmail);
+        }
+        authorize();
+    }, []);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -47,13 +65,13 @@ export default function Chats() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email: currEmail })
+            body: JSON.stringify({ userId: userId })
         })
             .then((res) => res.json())
             .then((data) => {
                 setdata(data.chatrooms);
             })
-    }, [currEmail]);
+    }, [userId]);
 
     const getchat = async (chatid, mailId) => {
         setchatnum(chatid);
@@ -89,7 +107,6 @@ export default function Chats() {
             </Button>
             <Offcanvas show={show} onHide={handleClose} placement='end'>
                 <Offcanvas.Header closeButton>
-                    {/* <Offcanvas.Title>Offcanvas</Offcanvas.Title> */}
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     {
@@ -106,7 +123,9 @@ export default function Chats() {
                                                     <small className="text-muted">{item.depdate}</small>
 
                                                 </Toast.Header>
-                                                <Toast.Body><button className='button-solid' onClick={() => getchat(item.chatid, item.mailid)}>
+                                                <Toast.Body><button
+                                                    className='button-solid'
+                                                    onClick={() => getchat(item.chatid, item.mailid)}>
                                                     {item.fromloc} to {item.toloc} in {item.vtype}
                                                 </button></Toast.Body>
 
@@ -130,11 +149,15 @@ export default function Chats() {
                                 }
                             </>
                             <hr></hr>
-                            {curr_status === '0' && localStorage.getItem('mailId') === req_mailid &&
-                                <button className='button-solid' onClick={() => handleUpdate(chatnum)}>Send Request</button>
+                            {curr_status === '0' && currEmail === req_mailid &&
+                                <button
+                                    className='button-solid'
+                                    onClick={() => handleUpdate(chatnum)}>Send Request</button>
                             }
-                            {curr_status === '1' && localStorage.getItem('mailId') !== req_mailid &&
-                                <button className='button-solid' onClick={() => handleUpdate(chatnum)}>Accept Request</button>
+                            {curr_status === '1' && currEmail !== req_mailid &&
+                                <button
+                                    className='button-solid'
+                                    onClick={() => handleUpdate(chatnum)}>Accept Request</button>
                             }
                             {curr_status === '2' &&
                                 <button className='button-solid'>Request Accepted</button>
@@ -142,7 +165,11 @@ export default function Chats() {
                             <hr></hr>
                             <div>
                                 <form onSubmit={handleSendMessage}>
-                                    <input type="text" placeholder='Type your message' className="form-control" onChange={handleMessage}></input>
+                                    <input
+                                        type="text"
+                                        placeholder='Type your message'
+                                        className="form-control"
+                                        onChange={handleMessage}></input>
                                     <button type="submit" className='button-solid'>Send</button>
                                 </form>
                             </div>

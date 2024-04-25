@@ -13,12 +13,10 @@ const Poolmsg = require('../models/PoolMsg');
 
 router.post('/createchatroom', async (req, res) => {
     try {
-        let requestor = await User.findOne({ email: req.body.req_mailid });
-        let owner = await User.findOne({ email: req.body.owner_mailid });
 
         let checkIt = await Chat.findOne({ 
-            ownerid: owner._id,
-            requestorid: requestor._id,
+            ownerid: req.body.owner_id,
+            requestorid: req.body.req_id,
             pmsgid: req.body.pmsg_id 
         });
 
@@ -27,26 +25,31 @@ router.post('/createchatroom', async (req, res) => {
         }
 
         await Chat.create({
-            ownerid: owner._id,
-            requestorid: requestor._id,
+            ownerid: req.body.owner_id,
+            requestorid: req.body.req_id,
             pmsgid: req.body.pmsg_id,
             chatmsg: [{ sender: "system", message: "Chatroom created"}],
             status: "0"
         })
 
         let mychat = await Chat.findOne({ 
-            ownerid: owner._id,
-            requestorid: requestor._id,
+            ownerid: req.body.owner_id,
+            requestorid: req.body.req_id,
             pmsgid: req.body.pmsg_id 
         });
 
-        await User.updateOne(
-            { _id: owner._id }, 
+        await Poolmsg.updateOne(
+            { _id: req.body.pmsg_id, }, 
             { $push: { chatids: mychat._id } }
         );
 
         await User.updateOne(
-            { _id: requestor._id }, 
+            { _id: req.body.owner_id, }, 
+            { $push: { chatids: mychat._id } }
+        );
+
+        await User.updateOne(
+            { _id: req.body.req_id }, 
             { $push: { chatids: mychat._id } }
         );
 
@@ -75,7 +78,7 @@ router.post('/sendmessage', async (req, res) => {
 
 router.post('/updatestatus', async (req, res) => {
     try {
-        let chatData = await Chat.findOne({ _id: req.body.chat_id });
+        let chatData = await Chat.findById(req.body.chat_id);
 
         let finalStatus = '0';
 
@@ -119,7 +122,7 @@ router.post('/updatestatus', async (req, res) => {
 
 router.post('/getchat', async (req, res) => {
     try {
-        let chatData = await Chat.findOne({ _id: req.body.chat_id });
+        let chatData = await Chat.findById(req.body.chat_id);
         res.send({ status: 'ok', msgdata: chatData.chatmsg, status: chatData.status});
     }
     catch (error) {
@@ -129,14 +132,14 @@ router.post('/getchat', async (req, res) => {
 
 router.post('/getuserchatrooms', async (req, res) => {
     try {
-        let userdata = await User.findOne({ email: req.body.email });
+        let userdata = await User.findById(req.body.userId);
         let chatids = userdata.chatids;
         let chatrooms = [];
         for(let i=0; i<chatids.length; i++){
-            let chatdata = await Chat.findOne({ _id: chatids[i] });
-            let pooldata = await Poolmsg.findOne({ _id: chatdata.pmsgid });
-            let reqdata = await User.findOne({ _id: chatdata.requestorid });
-            let ownerdata = await User.findOne({ _id: chatdata.ownerid });
+            let chatdata = await Chat.findById(chatids[i]);
+            let pooldata = await Poolmsg.findById(chatdata.pmsgid);
+            let reqdata = await User.findById(chatdata.requestorid);
+            let ownerdata = await User.findById(chatdata.ownerid);
             if(userdata.name === reqdata.name) {
                 chatrooms.push({
                     mailid: reqdata.email,

@@ -33,7 +33,7 @@ export default function DriverPage() {
             alert('Failed to book');
         }
         else {
-            alert('Contact mailId: ' + json.mailId);
+            alert('Contact mailId: ');
         }
     }
 
@@ -41,10 +41,22 @@ export default function DriverPage() {
         <div style={{ padding: "100px" }}>
             <div className='cardb'>
                 <div>
-                    <input type="text" placeholder='From' className="form-control" value={searchfrom} onChange={(e) => { setsearchfrom(e.target.value) }}></input>
+                    <input
+                        type="text"
+                        placeholder='From'
+                        className="form-control"
+                        value={searchfrom}
+                        onChange={(e) => { setsearchfrom(e.target.value) }}
+                    ></input>
                 </div>
                 <div>
-                    <input type="text" placeholder='Vehicle Type' className="form-control" value={searchvtype} onChange={(e) => { setsearchvtype(e.target.value) }}></input>
+                    <input
+                        type="text"
+                        placeholder='Vehicle Type'
+                        className="form-control"
+                        value={searchvtype}
+                        onChange={(e) => { setsearchvtype(e.target.value) }}
+                    ></input>
                 </div>
             </div>
             <br></br>
@@ -56,15 +68,19 @@ export default function DriverPage() {
                     .map(i => {
                         return (
                             <div className='col'>
-                                <div className="card " style={{ padding: '10px', width: '430px' }}>
+                                <div
+                                    className="card "
+                                    style={{ padding: '10px', width: '430px' }}>
                                     <div className="card-body">
                                         <div className='cardb'>
                                             <div className='cardb'><h3 className="card-title">{i.location} <span style={{ fontSize: '20px' }}>- {i.vtype}</span> </h3></div>
                                             <div>
                                                 {
                                                     (!localStorage.getItem('authToken')) ?
-                                                        <button className="btn m-3 btn-outline-dark">Log in first</button>
-                                                        : <button className="btn m-3 btn-outline-dark" onClick={() => bookCab(i._id)}>Join</button>
+                                                        <button
+                                                            className="btn m-3 btn-outline-dark">Log in first</button>
+                                                        : <button
+                                                            className="btn m-3 btn-outline-dark" onClick={() => bookCab(i._id)}>Join</button>
                                                 }
                                             </div>
                                         </div>

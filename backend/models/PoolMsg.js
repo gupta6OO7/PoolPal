@@ -35,9 +35,12 @@ const PMsgSchema = new Schema({
         type: String,
         required: true
     },
-    mailId:{
+    ownerId:{
         type: String,
         required: true
+    },
+    chatids:{
+        type: Array
     }
 });
 

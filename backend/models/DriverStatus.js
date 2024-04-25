@@ -17,11 +17,7 @@ const StatusSchema = new Schema({
     seats:{
         type: Number
     },
-    username:{
-        type: String,
-        required: true
-    },
-    mailId:{
+    driverId:{
         type: String,
         required: true
     }

@@ -15,7 +15,7 @@ router.post('/createpmsg', async (req, res) => {
             totalseats: req.body.totalseats,
             seatsleft: req.body.seatsleft,
             username: req.body.username,
-            mailId: req.body.mailId
+            ownerId: req.body.ownerId
         })
 
         let ts = req.body.totalseats;

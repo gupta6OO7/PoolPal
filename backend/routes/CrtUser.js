@@ -1,18 +1,17 @@
 const express = require('express');
-
 const router = express.Router()
 
 const User = require('../models/Users');
-
 const Status = require('../models/DriverStatus');
 
 const { body, validationResult } = require('express-validator');
-
 const bcrypt = require('bcryptjs');
-
 const jwt = require('jsonwebtoken');
 
-const jwtSecret = "YeForPres"
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.../.env') });
+
+const jwtSecret = process.env.JWT_SECRET;
 
 router.post('/createuser', [
 
@@ -21,6 +20,8 @@ router.post('/createuser', [
 
 ],
     async (req, res) => {
+
+        console.log(jwtSecret);
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -31,7 +32,7 @@ router.post('/createuser', [
         let secPass = await bcrypt.hash(req.body.password, salt);
 
         try {
-            let checkIt = await User.findOne({ usertype: req.body.usertype, email: req.body.email });
+            let checkIt = await User.findOne({ email: req.body.email });
 
             if(checkIt){
                 return res.status(400).json({ errors: 'You are already a user.' });
@@ -45,18 +46,17 @@ router.post('/createuser', [
                 chatids: []
             })
 
+            let userData = await User.findOne({ email: req.body.email });
+
             if (req.body.usertype === 'Driver') {
                 await Status.create({
                     availability: 'Busy',
                     location: '0',
                     vtype: '0',
                     seats: '0',
-                    username: req.body.name,
-                    mailId: req.body.email
+                    driverId: userData._id
                 })
             }
-
-            let userData = await User.findOne({ usertype: req.body.usertype, email: req.body.email });
 
             const newData = {
                 User: {
@@ -66,7 +66,7 @@ router.post('/createuser', [
 
             const newAuthToken = jwt.sign(newData, jwtSecret)
 
-            res.json({ success: true, authToken: newAuthToken, name: userData.name, mailId: userData.email });
+            res.json({ success: true, authToken: newAuthToken });
         }
         catch (error) {
             console.log(error);
@@ -99,12 +99,26 @@ router.post('/loginuser', async (req, res) => {
 
         const authToken = jwt.sign(data, jwtSecret)
 
-        res.json({ success: true, authToken: authToken, name: userData.name, mailId: userData.email });
+        res.json({ success: true, authToken: authToken });
     }
     catch (error) {
         console.log(error);
         res.json({ success: false });
     }
 })
+
+router.post('/extractUserData', [], async (req, res) => {
+    const token = req.body.authToken;
+
+    try {
+        const decoded = jwt.verify(token, jwtSecret);
+        const userData = await User.findById(decoded.User.id);
+        return res.json({ success: true, userName : userData.name, userEmail : userData.email, userType : userData.usertype, userId: userData.id });
+    }
+    catch (error) {
+        console.log(error);
+        res.json({ success: false });
+    }
+});
 
 module.exports = router; 
