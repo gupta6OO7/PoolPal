@@ -1,19 +1,7 @@
 const express = require('express');
-
 const router = express.Router()
 
-const PMsg = require('../models/PoolMsg')
 const Status = require('../models/DriverStatus')
-
-router.get('/getpoolmsg', async (req, res) => {
-    try {
-        const allpmsg = await PMsg.find({});
-        res.send({ status: 'ok', data: allpmsg });
-    }
-    catch (error) {
-        console.log(error);
-    }
-})
 
 router.get('/getdriverdata', async (req, res) => {
     try {
@@ -25,19 +13,34 @@ router.get('/getdriverdata', async (req, res) => {
     }
 })
 
-router.post('/bookdriver', async (req, res) => {
+router.post('/statusUpdate', async (req, res) => {
     try {
-        Status.findOneAndUpdate({ _id: req.body.id }, {
-            availability: 'Busy',
-            location: '0',
-            vtype: '0',
-            seats: '0'
-        }, (err)=>{
-            if(err){
-                console.log(err);
-            }
-        })
-        res.json({ success: true});
+
+        if(req.body.availability === 'Busy'){
+            Status.findOneAndUpdate({ driverId: req.body.driverId }, {
+                availability: 'Busy',
+                date: req.body.depdate
+            }, (err)=>{
+                if(err){
+                    console.log(err);
+                }
+            })
+        }
+        
+        else{
+            Status.findOneAndUpdate({ driverId: req.body.driverId }, {
+                availability: 'Idle',
+                location: req.body.location,
+                vtype: req.body.vtype,
+                seats: req.body.seats
+            }, (err)=>{
+                if(err){
+                    console.log(err);
+                }
+            })
+        }
+
+        res.json({ success: true });
     }
     catch (error) {
         console.log(error);

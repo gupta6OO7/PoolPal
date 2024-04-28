@@ -4,6 +4,16 @@ const router = express.Router()
 
 const PMsg = require('../models/PoolMsg')
 
+router.get('/getpoolmsg', async (req, res) => {
+    try {
+        const allpmsg = await PMsg.find({});
+        res.send({ status: 'ok', data: allpmsg });
+    }
+    catch (error) {
+        console.log(error);
+    }
+})
+
 router.post('/createpmsg', async (req, res) => {
     try {
         await PMsg.create({

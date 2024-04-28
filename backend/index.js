@@ -22,7 +22,6 @@ app.use(express.json())
 app.use('/api', require('./routes/CrtUser'));
 app.use('/api', require('./routes/CrtPMsg'));
 app.use('/api', require('./routes/DisplayData'));
-app.use('/api', require('./routes/StatusUpdate'));
 app.use('/api', require('./routes/HandleChats'));
 
 app.listen(port, () => {

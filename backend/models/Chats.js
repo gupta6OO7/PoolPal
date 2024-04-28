@@ -12,8 +12,7 @@ const ChatSchema = new Schema({
         required: true
     },
     pmsgid:{
-        type: String,
-        required: true
+        type: String
     },
     chatmsg:{
         type: Array

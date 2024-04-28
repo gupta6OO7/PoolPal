@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import Button from 'react-bootstrap/Button';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 
+export default function Chats(props) {
 
-export default function Chats() {
-
-    const [show, setShow] = useState(false);
     const [data, setdata] = useState([]);
+    const [date, setdate] = useState('');
     const [chatnum, setchatnum] = useState('none');
     const [curr_chat, setcurr_chat] = useState([]);
     const [curr_status, setcurr_status] = useState('');
@@ -17,6 +15,7 @@ export default function Chats() {
 
     const [userId, setuserId] = useState('');
     const [currEmail, setcurrEmail] = useState('');
+    const [userType, setuserType] = useState('');
 
     useEffect(() => {
         async function authorize() {
@@ -30,15 +29,27 @@ export default function Chats() {
             const json = await response.json()
             setuserId(json.userId);
             setcurrEmail(json.userEmail);
+            setuserType(json.userType);
+
+            const nextresponse = await fetch('http://localhost:5000/api/getuserchatrooms', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId: json.userId })
+            });
+            const nextjson = await nextresponse.json()
+            setdata(nextjson.chatrooms);
         }
         authorize();
     }, []);
 
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
     const handleMessage = (e) => {
         setmessage(e.target.value);
+    }
+
+    const handleDate = (e) => {
+        setdate(e.target.value);
     }
 
     const handleSendMessage = async (e) => {
@@ -59,20 +70,6 @@ export default function Chats() {
         }
     }
 
-    useEffect(() => {
-        fetch('http://localhost:5000/api/getuserchatrooms', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ userId: userId })
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setdata(data.chatrooms);
-            })
-    }, [userId]);
-
     const getchat = async (chatid, mailId) => {
         setchatnum(chatid);
         setreq_mailid(mailId);
@@ -89,23 +86,25 @@ export default function Chats() {
     }
 
     const handleUpdate = async (chatid) => {
-        const response = await fetch('http://localhost:5000/api/updatestatus', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ chat_id: chatid })
-        });
-        const json = await response.json();
-        setcurr_status(json.status);
+        if(userType === 'Driver' && date === ''){
+            alert('Enter date first');
+        }
+        else {
+            const response = await fetch('http://localhost:5000/api/updatestatus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ chat_id: chatid, date: date, userId: userId})
+            });
+            const json = await response.json();
+            setcurr_status(json.status);
+        }
     }
 
     return (
         <>
-            <Button variant="primary" onClick={handleShow} className="me-2">
-                Offcanvas
-            </Button>
-            <Offcanvas show={show} onHide={handleClose} placement='end'>
+            <Offcanvas show={props.show} onHide={props.handleClose} placement='end'>
                 <Offcanvas.Header closeButton>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
@@ -155,9 +154,23 @@ export default function Chats() {
                                     onClick={() => handleUpdate(chatnum)}>Send Request</button>
                             }
                             {curr_status === '1' && currEmail !== req_mailid &&
+                                <>
                                 <button
                                     className='button-solid'
                                     onClick={() => handleUpdate(chatnum)}>Accept Request</button>
+                                    {
+                                        userType === 'Driver' &&
+                                        <div>
+                                        <label for="name">When you will be free?</label>
+                                        <input
+                                            type="date"
+                                            className="form-control"
+                                            id="date" name='depdate'
+                                            value={date}
+                                            onChange={handleDate}></input>
+                                        </div>
+                                    }
+                                </>
                             }
                             {curr_status === '2' &&
                                 <button className='button-solid'>Request Accepted</button>

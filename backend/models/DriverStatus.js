@@ -20,6 +20,9 @@ const StatusSchema = new Schema({
     driverId:{
         type: String,
         required: true
+    },
+    date:{
+        type: String
     }
 });
 

@@ -1,39 +1,56 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export default function DriverPage() {
+
+    let navigate = useNavigate();
 
     const [data, setdata] = useState([]);
     const [searchfrom, setsearchfrom] = useState('');
     const [searchvtype, setsearchvtype] = useState('');
 
+    const [userId, setuserId] = useState('');
+
     useEffect(() => {
-        fetch('http://localhost:5000/api/getdriverdata', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setdata(data.data);
-                console.log(data);
-            })
+        async function authorize() {
+            const response = await fetch('http://localhost:5000/api/extractUserData', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ authToken: localStorage.getItem('authToken') })
+            });
+            const json = await response.json()
+            setuserId(json.userId);
+
+            const nextresponse = await fetch('http://localhost:5000/api/getdriverdata', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const nextjson = await nextresponse.json()
+            setdata(nextjson.data);
+        }
+        authorize();
     }, []);
 
-    const bookCab = async (msgid) => {
-        const response = await fetch('http://localhost:5000/api/bookdriver', {
+    const bookCab = async (ownerId) => {
+        const response = await fetch('http://localhost:5000/api/createchatroom', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ id: msgid })
+            body: JSON.stringify({ req_id: userId, owner_id: ownerId, pmsg_id: '' })
         });
         const json = await response.json()
         if (!json.success) {
-            alert('Failed to book');
+            alert('Failed to create chatroom');
         }
         else {
-            alert('Contact mailId: ');
+            alert('Chatroom created');
+            navigate('/');
         }
     }
 
@@ -80,7 +97,7 @@ export default function DriverPage() {
                                                         <button
                                                             className="btn m-3 btn-outline-dark">Log in first</button>
                                                         : <button
-                                                            className="btn m-3 btn-outline-dark" onClick={() => bookCab(i._id)}>Join</button>
+                                                            className="btn m-3 btn-outline-dark" onClick={() => bookCab(i.driverId)}>Join</button>
                                                 }
                                             </div>
                                         </div>

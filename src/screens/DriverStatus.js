@@ -26,7 +26,8 @@ export default function DriverStatus() {
     availability: "Busy",
     location: "",
     vtype: "",
-    seats: ""
+    seats: "",
+    depdate: ""
   })
 
   const handleSubmit = async (e) => {
@@ -41,7 +42,8 @@ export default function DriverStatus() {
         location: creds.location,
         vtype: creds.vtype,
         seats: creds.seats,
-        driverId: userId
+        driverId: userId,
+        depdate: creds.depdate
       })
     });
     const json = await response.json()
@@ -119,7 +121,16 @@ export default function DriverStatus() {
                   onChange={onChange}></input>
               </div>
             </div>
-            : ''
+            :
+            <div className="form-group">
+              <label for="name">When you will be free?</label>
+              <input
+                type="date"
+                className="form-control"
+                id="date" name='depdate'
+                value={creds.depdate}
+                onChange={onChange}></input>
+            </div>
         }
         {
           (!localStorage.getItem('authToken')) ?

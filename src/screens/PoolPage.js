@@ -20,19 +20,20 @@ export default function PoolPage() {
                 },
                 body: JSON.stringify({ authToken: localStorage.getItem('authToken') })
             });
+            
             const json = await response.json()
             setuserId(json.userId);
             console.log(json.userId);
-            fetch('http://localhost:5000/api/getpoolmsg', {
+
+            const nextresponse = await fetch('http://localhost:5000/api/getpoolmsg', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
             })
-                .then((res) => res.json())
-                .then((data) => {
-                    setdata(data.data);
-                })
+            
+            const nextjson = await nextresponse.json()
+            setdata(nextjson.data);
         }
         authorize();
     }, []);
@@ -51,7 +52,7 @@ export default function PoolPage() {
         }
         else {
             alert('Chatroom created');
-            navigate('/chats');
+            navigate('/');
         }
     }
 

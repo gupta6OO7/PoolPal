@@ -5,6 +5,7 @@ const router = express.Router()
 const Chat = require('../models/Chats')
 const User = require('../models/Users');
 const Poolmsg = require('../models/PoolMsg');
+const Status = require('../models/DriverStatus');
 
 // Status:
 // 0 -> Send request
@@ -38,10 +39,12 @@ router.post('/createchatroom', async (req, res) => {
             pmsgid: req.body.pmsg_id 
         });
 
-        await Poolmsg.updateOne(
-            { _id: req.body.pmsg_id, }, 
-            { $push: { chatids: mychat._id } }
-        );
+        if(req.body.pmsg_id !== '') {
+            await Poolmsg.updateOne(
+                { _id: req.body.pmsg_id, }, 
+                { $push: { chatids: mychat._id } }
+            );
+        }
 
         await User.updateOne(
             { _id: req.body.owner_id, }, 
@@ -110,6 +113,16 @@ router.post('/updatestatus', async (req, res) => {
                     console.log(err);
                 }
             })
+            if(req.body.date !== ''){
+                await Status.findOneAndUpdate({ driverId: req.body.userId }, {
+                    availability: 'Busy',
+                    date: req.body.date
+                }, (err)=>{
+                    if(err){
+                        console.log(err);
+                    }
+                })
+            }
         }
 
         res.json({ success: true , status: finalStatus});
@@ -136,31 +149,35 @@ router.post('/getuserchatrooms', async (req, res) => {
         let chatids = userdata.chatids;
         let chatrooms = [];
         for(let i=0; i<chatids.length; i++){
+
             let chatdata = await Chat.findById(chatids[i]);
-            let pooldata = await Poolmsg.findById(chatdata.pmsgid);
             let reqdata = await User.findById(chatdata.requestorid);
             let ownerdata = await User.findById(chatdata.ownerid);
+
+            let temp = { chatid: chatids[i], mailid: reqdata.email };
             if(userdata.name === reqdata.name) {
-                chatrooms.push({
-                    mailid: reqdata.email,
-                    chatid: chatids[i],
-                    username: ownerdata.name,
-                    fromloc: pooldata.fromloc,
-                    toloc: pooldata.toloc,
-                    vtype: pooldata.vtype,
-                    depdate: pooldata.depdate
-                });
+                temp.username = ownerdata.name;
+            }
+            else {
+                temp.username = reqdata.name;
+            }
+
+            if(chatdata.pmsgid === ''){
+                temp.fromloc = '';
+                temp.toloc = '';
+                temp.vtype = '';
+                temp.depdate = '';
+                chatrooms.push(temp);
                 continue;
             }
-            chatrooms.push({
-                mailid: reqdata.email,
-                chatid: chatids[i],
-                username: reqdata.name,
-                fromloc: pooldata.fromloc,
-                toloc: pooldata.toloc,
-                vtype: pooldata.vtype,
-                depdate: pooldata.depdate
-            });
+
+            let pooldata = await Poolmsg.findById(chatdata.pmsgid);
+            temp.fromloc = pooldata.fromloc;
+            temp.toloc = pooldata.toloc;
+            temp.vtype = pooldata.vtype;
+            temp.depdate = pooldata.depdate;
+
+            chatrooms.push(temp);
         }
         res.send({ success: true, chatrooms: chatrooms });
     }
