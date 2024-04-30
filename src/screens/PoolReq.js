@@ -76,7 +76,7 @@ export default function PoolReq() {
       }} onSubmit={handleSubmit}>
 
         <div className="form-group">
-          <label for="name">From</label>
+          <label htmlFor="name">From</label>
           <input
             type="text"
             className="form-control"
@@ -88,7 +88,7 @@ export default function PoolReq() {
         </div>
 
         <div className="form-group">
-          <label for="name">To</label>
+          <label htmlFor="name">To</label>
           <input
             type="text"
             className="form-control"
@@ -100,7 +100,7 @@ export default function PoolReq() {
         </div>
 
         <div className="form-group">
-          <label for="name">Vehicle Type</label>
+          <label htmlFor="name">Vehicle Type</label>
           <input
             type="text"
             className="form-control"
@@ -112,7 +112,7 @@ export default function PoolReq() {
         </div>
 
         <div className="form-group">
-          <label for="name">Departure Time</label>
+          <label htmlFor="name">Departure Time</label>
           <input
             type="time"
             className="form-control"
@@ -123,7 +123,7 @@ export default function PoolReq() {
         </div>
 
         <div className="form-group">
-          <label for="name">Departure Date</label>
+          <label htmlFor="name">Departure Date</label>
           <input
             type="date"
             className="form-control"
@@ -133,7 +133,7 @@ export default function PoolReq() {
         </div>
 
         <div className="form-group">
-          <label for="name">Total Seats</label>
+          <label htmlFor="name">Total Seats</label>
           <input
             type="number"
             className="form-control"
@@ -144,7 +144,7 @@ export default function PoolReq() {
         </div>
 
         <div className="form-group">
-          <label for="name">Seats left</label>
+          <label htmlFor="name">Seats left</label>
           <input
             type="number"
             className="form-control"
