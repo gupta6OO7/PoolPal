@@ -3,7 +3,7 @@ const app = express()
 const port = 5000
 const mongoDb = require("./db")
 
-app.use((req, res, next)=>{
+app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.header(
     'Access-Control-Allow-Headers',
@@ -24,6 +24,30 @@ app.use('/api', require('./routes/CrtPMsg'));
 app.use('/api', require('./routes/DisplayData'));
 app.use('/api', require('./routes/HandleChats'));
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
-})
+});
+
+const io = require("socket.io")(server, {
+  pingTimeout: 15000,
+  cors: {
+    origin: "http://localhost:3000"
+  },
+});
+
+io.on("connection", (socket) => {
+
+  socket.on("get-chatroom", async chatid => {
+
+    socket.join(chatid);
+
+    socket.on("new message", (newMessageRecieved) => {
+      socket.broadcast.to(chatid).emit("message recieved", newMessageRecieved);
+    });
+
+    socket.on("update-status", (basket) => {
+      socket.broadcast.to(basket.chatId).emit("status recieved", basket);
+    });
+  });
+
+});

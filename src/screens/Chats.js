@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import Offcanvas from 'react-bootstrap/Offcanvas';
+import io from "socket.io-client";
 
 export default function Chats(props) {
 
@@ -16,6 +17,8 @@ export default function Chats(props) {
     const [userId, setuserId] = useState('');
     const [currEmail, setcurrEmail] = useState('');
     const [userType, setuserType] = useState('');
+
+    const [socket, setSocket] = useState(null);
 
     useEffect(() => {
         async function authorize() {
@@ -44,6 +47,31 @@ export default function Chats(props) {
         authorize();
     }, []);
 
+    useEffect(() => {
+        const s = io("http://localhost:5000")
+        setSocket(s)
+    
+        return () => {
+          s.disconnect()
+        }
+      }, []);
+
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on("message recieved", (newMessageRecieved) => {
+            setcurr_chat([...curr_chat, newMessageRecieved]);
+        });
+    }, [socket, curr_chat]);
+
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on("status recieved", (basket) => {
+            setcurr_status(basket.status);
+        });
+    }, [socket]);
+
     const handleMessage = (e) => {
         setmessage(e.target.value);
     }
@@ -66,7 +94,10 @@ export default function Chats(props) {
             alert('Failed to send message');
         }
         else {
-            setmessage('');
+            var sdata = { chat: chatnum, sender: currEmail, message: message };
+            setmessage(".");
+            socket.emit("new message", sdata);
+            setcurr_chat([...curr_chat, sdata]);
         }
     }
 
@@ -83,10 +114,12 @@ export default function Chats(props) {
         const json = await response.json();
         setcurr_chat(json.msgdata);
         setcurr_status(json.status);
+
+        socket.emit("get-chatroom", chatid);
     }
 
     const handleUpdate = async (chatid) => {
-        if(userType === 'Driver' && date === ''){
+        if (userType === 'Driver' && date === '') {
             alert('Enter date first');
         }
         else {
@@ -95,10 +128,13 @@ export default function Chats(props) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ chat_id: chatid, date: date, userId: userId})
+                body: JSON.stringify({ chat_id: chatid, date: date, userId: userId })
             });
             const json = await response.json();
             setcurr_status(json.status);
+
+            var basket = { chatId: chatid, status: json.status};
+            socket.emit("update-status", basket);
         }
     }
 
@@ -155,19 +191,19 @@ export default function Chats(props) {
                             }
                             {curr_status === '1' && currEmail !== req_mailid &&
                                 <>
-                                <button
-                                    className='button-solid'
-                                    onClick={() => handleUpdate(chatnum)}>Accept Request</button>
+                                    <button
+                                        className='button-solid'
+                                        onClick={() => handleUpdate(chatnum)}>Accept Request</button>
                                     {
                                         userType === 'Driver' &&
                                         <div>
-                                        <label for="name">When you will be free?</label>
-                                        <input
-                                            type="date"
-                                            className="form-control"
-                                            id="date" name='depdate'
-                                            value={date}
-                                            onChange={handleDate}></input>
+                                            <label for="name">When you will be free?</label>
+                                            <input
+                                                type="date"
+                                                className="form-control"
+                                                id="date" name='depdate'
+                                                value={date}
+                                                onChange={handleDate}></input>
                                         </div>
                                     }
                                 </>
