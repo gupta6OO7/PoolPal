@@ -1,109 +1,104 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import bgim1 from './bgim/ok11.gif'
-import bgim2 from './bgim/PARIS.jpg'
-import bgim3 from './bgim/Drive.png'
-import Footer from '../components/Footer'
-import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import MyPools from './MyPools';
+import PoolPage from './PoolPage';
+import DriverPage from './DriverPage';
+import PoolReq from './PoolReq';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const darkTheme = createTheme({
+    palette: {
+        mode: 'dark',
+        primary: {
+            main: '#1976d2',
+        },
+    },
+});
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`vertical-tabpanel-${index}`}
+            aria-labelledby={`vertical-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 3 }}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
+}
+
+TabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+    return {
+        id: `vertical-tab-${index}`,
+        'aria-controls': `vertical-tabpanel-${index}`,
+    };
+}
 
 export default function Home() {
+
+    const [value, setValue] = React.useState(0);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
     return (
-        <div>
-            <Navbar></Navbar>
-            <div
-                className="jumbotron jumbotron-fluid jumbo1"
-                style={{
-                    backgroundImage: `url(${bgim1})`,
-                    backgroundSize: 'cover',
-                    textAlign: 'center'
-                }}>
-                <div
-                    className="container"
-                    style={{ textAlign: 'left' }}>
-                    <h1 className="display-4">Find Participants</h1>
-                    <p className="lead"
-                    >Invite others to join you on your ride to help the environment and save money.</p>
-                    {
-                        (!localStorage.getItem('authToken')) ?
-                            <Link to='/login'><button
-                                type="button"
-                                className="btn"
-                                style={{
-                                    color: 'white',
-                                    backgroundColor: 'black'
-                                }}>Create</button></Link>
-                            : <Link
-                                to='/poolreq'><button
-                                    type="button"
-                                    className="btn"
-                                    style={{
-                                        color: 'white',
-                                        backgroundColor: 'black'
-                                    }}>Create</button></Link>
-                    }
-                </div>
-            </div>
-
-            <div
-                className="jumbotron jumbotron-fluid jumbo2"
-                style={{
-                    backgroundImage: `url(${bgim2})`,
-                    backgroundSize: 'cover',
-                    textAlign: 'center'
-                }}>
-                <div className="container" style={{ textAlign: 'left' }}>
-                    <h1 className="display-4">Join a Pool</h1>
-                    <p className="lead">Reach out to others who are interested in your participation</p>
-                    {
-                        (!localStorage.getItem('authToken')) ?
-                            <Link to='/login'><button
-                                type="button"
-                                className="btn"
-                                style={{
-                                    backgroundColor: '#a95050',
-                                    color: '#9dd8ed'
-                                }}>PoolUp</button></Link>
-                            : <Link to='/poolpage'><button
-                                type="button"
-                                className="btn"
-                                style={{
-                                    backgroundColor: '#a95050',
-                                    color: '#9dd8ed'
-                                }}>PoolUp</button></Link>
-                    }
-                </div>
-            </div>
-
-            <div
-                className="jumbotron jumbotron-fluid jumbo3"
-                style={{
-                    backgroundImage: `url(${bgim3})`,
-                    backgroundSize: 'cover',
-                    textAlign: 'center'
-                }}>
-                <div className="container" style={{ textAlign: 'right' }}>
-                    <h1 className="display-4">Book a Cab</h1>
-                    <p className="lead">No more going out to search or visiting the cab service agents.</p>
-                    {
-                        (!localStorage.getItem('authToken')) ?
-                            <Link to='/login'><button
-                                type="button"
-                                className="btn"
-                                style={{
-                                    backgroundColor: '#e7c1a1',
-                                    color: 'black'
-                                }}>Book</button></Link>
-                            : <Link to='/dpage'><button
-                                type="button"
-                                className="btn"
-                                style={{
-                                    backgroundColor: '#e7c1a1',
-                                    color: 'black'
-                                }}>Book</button></Link>
-                    }
-                </div>
-            </div>
-            <Footer></Footer>
-        </div>
+        <>
+            <ThemeProvider theme={darkTheme}>
+                <Navbar></Navbar>
+                <Box
+                    sx={{
+                        flexGrow: 1,
+                        bgcolor: 'background.paper',
+                        display: 'flex',
+                        paddingTop: '100px'
+                    }}
+                >
+                    <Tabs
+                        orientation="vertical"
+                        variant="scrollable"
+                        value={value}
+                        onChange={handleChange}
+                        aria-label="Vertical tabs example"
+                        sx={{ borderRight: 1, borderColor: 'divider' }}
+                    >
+                        <Tab label="Create a Pool" {...a11yProps(0)} />
+                        <Tab label="Join Pool" {...a11yProps(1)} />
+                        <Tab label="Book a Cab" {...a11yProps(2)} />
+                        <Tab label="My Pools" {...a11yProps(3)} />
+                    </Tabs>
+                    <TabPanel value={value} index={0}>
+                    <PoolReq></PoolReq>
+                    </TabPanel>
+                    <TabPanel value={value} index={1}>
+                        <PoolPage></PoolPage>
+                    </TabPanel>
+                    <TabPanel value={value} index={2}>
+                        <DriverPage></DriverPage>
+                    </TabPanel>
+                    <TabPanel value={value} index={3}>
+                        <MyPools></MyPools>
+                    </TabPanel>
+                </Box>
+            </ThemeProvider>
+        </>
     )
 }

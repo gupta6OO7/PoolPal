@@ -7,12 +7,7 @@ import {
 import Home from './screens/Home';
 import Login from './screens/Login';
 import Signup from './screens/Signup';
-import PoolReq from './screens/PoolReq';
-import PoolPage from './screens/PoolPage';
 import DriverHome from './screens/DriverHome';
-import DriverPage from './screens/DriverPage';
-import DriverStatus from './screens/DriverStatus';
-import MyPools from './screens/MyPools';
 
 function App() {
   return (
@@ -20,14 +15,9 @@ function App() {
       <div>
         <Routes>
         <Route exact path = "/" element = {<Home></Home>}></Route>
-          <Route exact path = "/poolpage" element = {<PoolPage></PoolPage>}></Route>
           <Route exact path = "/login" element = {<Login></Login>}></Route>
           <Route exact path = "/signup" element = {<Signup></Signup>}></Route>
-          <Route exact path = "/poolreq" element = {<PoolReq></PoolReq>}></Route>
           <Route exact path = "/dhome" element = {<DriverHome></DriverHome>}></Route>
-          <Route exact path = "/dpage" element = {<DriverPage></DriverPage>}></Route>
-          <Route exact path = "/dstatus" element = {<DriverStatus></DriverStatus>}></Route>
-          <Route exact path = "/mypools" element = {<MyPools></MyPools>}></Route>
         </Routes>
       </div>
     </Router>

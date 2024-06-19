@@ -1,9 +1,30 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import UpdateIcon from '@mui/icons-material/Update';
+import Typography from '@mui/material/Typography';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Paper from '@mui/material/Paper';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import cpimage from './bgim/driver.jpg'
+
+const darkTheme = createTheme({
+  palette: {
+      mode: 'dark',
+      primary: {
+          main: '#1976d2',
+      },
+  },
+});
 
 export default function DriverStatus() {
-
-  let navigate = useNavigate();
 
   const [userId, setuserId] = useState('');
 
@@ -51,7 +72,7 @@ export default function DriverStatus() {
       alert(json.errors);
     }
     else {
-      navigate('/dhome');
+      alert("Status Updated Successfully");
     }
   }
 
@@ -60,84 +81,120 @@ export default function DriverStatus() {
   }
 
   return (
-    <div>
-      <form style={{
-        paddingTop: '120px',
-        paddingLeft: '500px',
-        paddingRight: '500px'
-      }} onSubmit={handleSubmit} >
-
-        <div className="form-group">
-          <label htmlFor="availability">Status</label>
-          <select
-            class="form-control"
-            id="availability"
-            name='availability'
-            value={creds.availability}
-            onChange={onChange}>
-            <option>Busy</option>
-            <option>Idle</option>
-          </select>
-        </div>
-
-        {
-          (creds.availability === 'Idle') ?
-            <div>
-              <div className="form-group">
-                <label htmlFor="location">Location</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="location"
-                  placeholder="Your current location"
-                  name='location'
-                  value={creds.location}
-                  onChange={onChange}></input>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="seats">Seats</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="seats"
-                  aria-describedby="seatsHelp"
-                  name='seats'
-                  value={creds.seats}
-                  onChange={onChange}></input>
-                <small id="seatsHelp"
-                  className="form-text text-muted">This inludes driver's seat.</small>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="vtype">Vehicle Type</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="vtype"
-                  placeholder="Enter vehicle type"
-                  name='vtype'
-                  value={creds.vtype}
-                  onChange={onChange}></input>
-              </div>
-            </div>
-            :
-            <div className="form-group">
-              <label for="name">When you will be free?</label>
-              <input
-                type="date"
-                className="form-control"
-                id="date" name='depdate'
-                value={creds.depdate}
-                onChange={onChange}></input>
-            </div>
-        }
-        {
-          (!localStorage.getItem('authToken')) ?
-            <button className="btn m-3 btn-primary">Log in first</button>
-            : <button type="submit" className="btn m-3 btn-primary">Submit</button>
-        }
-      </form>
-    </div>
+    <ThemeProvider theme={darkTheme}>
+      <Grid container component="main" sx={{ height: '100vh' }} paddingTop={'40px'}>
+        <CssBaseline />
+        <Grid
+          item
+          xs={false}
+          sm={4}
+          md={7}
+          sx={{
+            backgroundImage: `url(${cpimage})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: (t) =>
+              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <Box
+            sx={{
+              my: 8,
+              mx: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+              <UpdateIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Status
+            </Typography>
+            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Availability*</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  name='availability'
+                  value={creds.availability}
+                  label="Availability"
+                  onChange={onChange}
+                >
+                  <MenuItem value={"Busy"}>Busy</MenuItem>
+                  <MenuItem value={"Idle"}>Idle</MenuItem>
+                </Select>
+              </FormControl>
+              {
+                (creds.availability === 'Idle') ?
+                  <>
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="location"
+                      label="Location"
+                      name="location"
+                      onChange={onChange}
+                      value={creds.location}
+                      autoFocus
+                    />
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="seats"
+                      label="Seats"
+                      name="seats"
+                      type="number"
+                      InputLabelProps={{ shrink: true }}
+                      onChange={onChange}
+                      value={creds.seats}
+                      autoFocus
+                    />
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="vtype"
+                      label="Vehicle Type"
+                      name="vtype"
+                      onChange={onChange}
+                      value={creds.vtype}
+                      autoFocus
+                    />
+                  </>
+                  :
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="depdate"
+                    label="When you will be free?"
+                    name="depdate"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    onChange={onChange}
+                    value={creds.depdate}
+                    autoFocus
+                  />
+              }
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Update
+              </Button>
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+    </ThemeProvider>
   )
 }

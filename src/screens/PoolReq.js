@@ -1,5 +1,25 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import cpimage from './bgim/poolreq.jpg'
+
+const darkTheme = createTheme({
+  palette: {
+      mode: 'dark',
+      primary: {
+          main: '#1976d2',
+      },
+  },
+});
 
 export default function PoolReq() {
 
@@ -67,100 +87,133 @@ export default function PoolReq() {
     setcreds({ ...creds, [event.target.name]: event.target.value })
   }
 
+
   return (
-    <div>
-      <form style={{
-        paddingTop: '40px',
-        paddingLeft: '500px',
-        paddingRight: '500px'
-      }} onSubmit={handleSubmit}>
 
-        <div className="form-group">
-          <label htmlFor="name">From</label>
-          <input
-            type="text"
-            className="form-control"
-            id="from"
-            placeholder="Initial Location"
-            name='fromloc'
-            value={creds.fromloc}
-            onChange={onChange}></input>
-        </div>
+    <ThemeProvider theme={darkTheme}>
+      <Grid container component="main" sx={{ height: '100vh' }}>
+        <CssBaseline />
+        <Grid
+          item
+          xs={false}
+          sm={4}
+          md={7}
+          sx={{
+            backgroundImage: `url(${cpimage})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: (t) =>
+              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <Box
+            sx={{
+              my: 8,
+              mx: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+              <AddCircleIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Pool Request
+            </Typography>
+            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="fromloc"
+                label="From"
+                name="fromloc"
+                onChange={onChange}
+                value={creds.fromloc}
+                autoFocus
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="toloc"
+                label="To"
+                name="toloc"
+                onChange={onChange}
+                value={creds.toloc}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="vtype"
+                label="Vehicle Type"
+                name="vtype"
+                onChange={onChange}
+                value={creds.vtype}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="deptime"
+                label="Departure Time"
+                name="deptime"
+                InputLabelProps={{ shrink: true }}
+                type="time"
+                onChange={onChange}
+                value={creds.deptime}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="depdate"
+                label="Departure Date"
+                InputLabelProps={{ shrink: true }}
+                name="depdate"
+                type="date"
+                onChange={onChange}
+                value={creds.depdate}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="totalseats"
+                label="Total Seats"
+                name="totalseats"
+                type="number"
+                onChange={onChange}
+                value={creds.totalseats}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="seatsleft"
+                label="Seats left"
+                name="seatsleft"
+                type="number"
+                onChange={onChange}
+                value={creds.seatsleft}
+              />
 
-        <div className="form-group">
-          <label htmlFor="name">To</label>
-          <input
-            type="text"
-            className="form-control"
-            id="too"
-            placeholder="Destination"
-            name='toloc'
-            value={creds.toloc}
-            onChange={onChange}></input>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="name">Vehicle Type</label>
-          <input
-            type="text"
-            className="form-control"
-            id="vt"
-            placeholder="For example: Jeep"
-            name='vtype'
-            value={creds.vtype}
-            onChange={onChange}></input>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="name">Departure Time</label>
-          <input
-            type="time"
-            className="form-control"
-            id="time"
-            name='deptime'
-            value={creds.deptime}
-            onChange={onChange}></input>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="name">Departure Date</label>
-          <input
-            type="date"
-            className="form-control"
-            id="date" name='depdate'
-            value={creds.depdate}
-            onChange={onChange}></input>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="name">Total Seats</label>
-          <input
-            type="number"
-            className="form-control"
-            id="ts"
-            name='totalseats'
-            value={creds.totalseats}
-            onChange={onChange}></input>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="name">Seats left</label>
-          <input
-            type="number"
-            className="form-control"
-            id="sl"
-            name='seatsleft'
-            value={creds.seatsleft}
-            onChange={onChange}></input>
-        </div>
-
-        {
-          (!localStorage.getItem('authToken')) ?
-            <button className="btn m-3 btn-primary">Log in first</button>
-            : <button type="submit" className="btn m-3 btn-primary">Submit</button>
-        }
-
-      </form>
-    </div>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Add
+              </Button>
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+    </ThemeProvider>
   )
 }

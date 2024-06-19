@@ -1,13 +1,37 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Chats from '../screens/Chats';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import DriveEtaIcon from '@mui/icons-material/DriveEta';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import Drawer from '@mui/material/Drawer';
 
 export default function Navbar() {
 
+    const darkTheme = createTheme({
+        palette: {
+            mode: 'dark',
+            primary: {
+                main: '#1976d2',
+            },
+        },
+    });
+
     let navigate = useNavigate();
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+
+    const [state, setState] = useState(false);
+
+    const toggleDrawer = (open) => (event) => {
+        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+            return;
+        }
+        setState(open);
+    };
 
     const handlelogout = () => {
         console.log(localStorage.getItem('authToken'));
@@ -17,50 +41,51 @@ export default function Navbar() {
     }
 
     return (
-        <div>
-            <nav className="navbar navbar-expand-lg">
-                <div className="container-fluid">
-                    <Link
-                        style={{ color: 'white' }}
-                        className="navbar-brand fs-2" to="/">PoolPal</Link>
-                    <button
-                        className="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="/navbarNavAltMarkup"
-                        aria-controls="navbarNavAltMarkup"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-                        {
-                            (!localStorage.getItem('authToken')) ?
-                                <div className="navbar-nav d-flex ms-auto">
-                                    <Link
-                                        style={{ color: 'white' }}
-                                        className="nav-link fs-5"
-                                        to="/login">Login</Link>
-                                    <Link
-                                        style={{ color: 'white' }}
-                                        className="nav-link fs-5"
-                                        to="/signup">Signup</Link>
-                                </div>
-                                : <div className="navbar-nav d-flex ms-auto">
-                                    <div
-                                        className='btn mx-2 fs-5'
-                                        style={{ backgroundColor: 'black', color: 'white' }}
-                                        onClick={handleShow} >Chat</div>
-                                    <div
-                                        className='btn mx-2 fs-5'
-                                        style={{ backgroundColor: 'black', color: 'white' }}
-                                        onClick={handlelogout} >Logout</div>
-                                    <Chats show={show} handleClose={handleClose}></Chats>
-                                </div>
-                        }
-                    </div>
-                </div>
-            </nav>
-        </div>
+        <ThemeProvider theme={darkTheme}>
+            <Box sx={{ display: 'flex' }}>
+                <CssBaseline />
+                <AppBar component="nav">
+                    <Toolbar>
+                        <DriveEtaIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                        <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+                        >
+                            POOLPAL
+                        </Typography>
+                        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                            {
+                                (!localStorage.getItem('authToken')) ?
+                                    <>
+                                        <Button
+                                            sx={{ color: '#fff' }}
+                                            component={Link}
+                                            to="/login">Login</Button>
+                                        <Button
+                                            sx={{ color: '#fff' }}
+                                            component={Link}
+                                            to="/signup">Signup</Button>
+                                    </>
+                                    :
+                                    <>
+                                        <Button sx={{ color: '#fff' }} onClick={toggleDrawer(true)}>Chat</Button>
+                                        <Drawer
+                                            anchor={'right'}
+                                            open={state}
+                                            onClose={toggleDrawer(false)}
+                                        >
+                                            <Chats toggleDrawer={toggleDrawer}> </Chats>
+                                        </Drawer>
+                                        <Button
+                                            sx={{ color: '#fff' }}
+                                            onClick={handlelogout}>Logout</Button>
+                                    </>
+                            }
+                        </Box>
+                    </Toolbar>
+                </AppBar>
+            </Box>
+        </ThemeProvider>
     )
 }

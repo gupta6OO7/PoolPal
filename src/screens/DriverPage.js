@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Unstable_Grid2';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import CardHeader from '@mui/material/CardHeader';
+import IconButton from '@mui/material/IconButton';
+import ChatIcon from '@mui/icons-material/Chat';
+import LockIcon from '@mui/icons-material/Lock';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const defaultTheme = createTheme();
 
 export default function DriverPage() {
-
-    let navigate = useNavigate();
 
     const [data, setdata] = useState([]);
     const [searchfrom, setsearchfrom] = useState('');
@@ -50,69 +60,74 @@ export default function DriverPage() {
         }
         else {
             alert('Chatroom created');
-            navigate('/');
         }
     }
 
     return (
-        <div style={{ padding: "100px" }}>
-            <div className='cardb'>
-                <div>
-                    <input
-                        type="text"
-                        placeholder='From'
-                        className="form-control"
-                        value={searchfrom}
-                        onChange={(e) => { setsearchfrom(e.target.value) }}
-                    ></input>
-                </div>
-                <div>
-                    <input
-                        type="text"
-                        placeholder='Vehicle Type'
-                        className="form-control"
-                        value={searchvtype}
-                        onChange={(e) => { setsearchvtype(e.target.value) }}
-                    ></input>
-                </div>
-            </div>
-            <br></br>
-            <br></br>
-            <div className="row row-cols-1 row-cols-md-3 g-4" >
-                {data.filter((i) => ((i.location.toLowerCase().includes(searchfrom.toLocaleLowerCase()))
-                    && (i.vtype.toLowerCase().includes(searchvtype.toLocaleLowerCase()))
-                ))
-                    .map(i => {
-                        return (
-                            <div className='col'>
-                                <div
-                                    className="card "
-                                    style={{ padding: '10px', width: '430px' }}>
-                                    <div className="card-body">
-                                        <div className='cardb'>
-                                            <div className='cardb'><h3 className="card-title">{i.location} <span style={{ fontSize: '20px' }}>- {i.vtype}</span> </h3></div>
-                                            <div>
-                                                {
-                                                    (!localStorage.getItem('authToken')) ?
-                                                        <button
-                                                            className="btn m-3 btn-outline-dark">Log in first</button>
-                                                        : <button
-                                                            className="btn m-3 btn-outline-dark" onClick={() => bookCab(i.driverId)}>Join</button>
+        <>
+            <Box
+                component="form"
+                sx={{
+                    '& > :not(style)': { m: 1, width: '40ch' },
+                }}
+                noValidate
+                autoComplete="off"
+            >
+                <TextField
+                    id="from"
+                    label="From"
+                    variant="outlined"
+                    value={searchfrom}
+                    onChange={(e) => { setsearchfrom(e.target.value) }}
+                />
+                <TextField
+                    id="vtype"
+                    label="Vehicle Type"
+                    variant="outlined"
+                    value={searchvtype}
+                    onChange={(e) => { setsearchvtype(e.target.value) }}
+                />
+            </Box>
+
+            <br />
+
+            <Box sx={{ flexGrow: 1 }}>
+                <Grid container spacing={2}>
+                    {data.filter((i) => ((i.location.toLowerCase().includes(searchfrom.toLocaleLowerCase()))
+                        && (i.vtype.toLowerCase().includes(searchvtype.toLocaleLowerCase()))
+                    ))
+                        .map(i => {
+                            return (
+                                <Grid xs={6}>
+                                    <ThemeProvider theme={defaultTheme}>
+                                        <Card variant="outlined">
+                                            <CardHeader
+                                                action={
+                                                    <IconButton aria-label="settings">
+                                                        {
+                                                            (!localStorage.getItem('authToken')) ?
+                                                                <LockIcon> </LockIcon>
+                                                                : <ChatIcon
+                                                                    onClick={() => bookCab(i.driverId)}
+                                                                ></ChatIcon>
+                                                        }
+                                                    </IconButton>
                                                 }
-                                            </div>
-                                        </div>
-
-                                        <div className='cardb'>
-                                            <div>Seats: {i.seats}</div>
-                                            <div className='d-flex ms-auto'>Pal - {i.username}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        )
-                    })}
-            </div>
-        </div>
+                                                title={i.vtype}
+                                                subheader={i.location}
+                                            />
+                                            <CardContent>
+                                                <Typography variant="body2">
+                                                    This vehicle has occupancy of {i.seats} passengers.
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                    </ThemeProvider>
+                                </Grid>
+                            )
+                        })}
+                </Grid>
+            </Box>
+        </>
     )
 }

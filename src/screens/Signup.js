@@ -1,5 +1,29 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Paper from '@mui/material/Paper';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import cpimage from './bgim/signup.jpg'
+
+const darkTheme = createTheme({
+  palette: {
+      mode: 'dark',
+      primary: {
+          main: '#1976d2',
+      },
+  },
+});
 
 export default function Signup() {
 
@@ -45,82 +69,109 @@ export default function Signup() {
   }
 
   return (
-    <div>
-      <form style={{
-        paddingTop: '120px',
-        paddingLeft: '500px',
-        paddingRight: '500px'
-      }} onSubmit={handleSubmit}>
 
-        <div className="form-group">
-          <label htmlFor="usertype">User</label>
-          <select
-            class="form-control"
-            id="usertype"
-            name='usertype'
-            value={creds.usertype}
-            onChange={onChange}>
-            <option>Customer</option>
-            <option>Driver</option>
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="name">Name</label>
-          <input
-            type="text"
-            className="form-control"
-            id="name"
-            placeholder="Your Name"
-            name='name'
-            value={creds.name}
-            onChange={onChange}></input>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="exampleInputEmail1">Email address</label>
-          <input
-            type="email"
-            className="form-control"
-            id="exampleInputEmail1"
-            aria-describedby="emailHelp"
-            placeholder="Enter email"
-            name='email'
-            value={creds.email}
-            onChange={onChange}></input>
-          <small
-            id="emailHelp"
-            className="form-text text-muted"
-          >We'll never share your email with anyone else.</small>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="exampleInputPassword1">Password</label>
-          <input
-            type="password"
-            className="form-control"
-            id="exampleInputPassword1"
-            placeholder="Password"
-            name='password'
-            value={creds.password}
-            onChange={onChange}></input>
-          <small
-            id="passHelp"
-            className="form-text text-muted"
-          >Password must be at least 5 characters long.</small>
-        </div>
-
-        <button
-          type="submit"
-          className="btn m-3 btn-primary"
-        >Submit</button>
-        <Link to='/login'>
-          <button
-            type="submit"
-            className="btn m-3 btn-success"
-          >Already a User?</button>
-        </Link>
-      </form>
-    </div>
+    <ThemeProvider theme={darkTheme}>
+      <Grid container component="main" sx={{ height: '100vh' }}>
+        <CssBaseline />
+        <Grid
+          item
+          xs={false}
+          sm={4}
+          md={7}
+          sx={{
+            backgroundImage: `url(${cpimage})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: (t) =>
+              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <Box
+            sx={{
+              my: 8,
+              mx: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign Up
+            </Typography>
+            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Role*</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  name='usertype'
+                  value={creds.usertype}
+                  label="Role"
+                  onChange={onChange}
+                >
+                  <MenuItem value={"Customer"}>Customer</MenuItem>
+                  <MenuItem value={"Driver"}>Driver</MenuItem>
+                </Select>
+              </FormControl>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="name"
+                label="Name"
+                name="name"
+                onChange={onChange}
+                value={creds.name}
+                autoFocus
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                onChange={onChange}
+                value={creds.email}
+                autoFocus
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                value={creds.password}
+                onChange={onChange}
+                autoComplete="current-password"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign Up
+              </Button>
+              <Grid container>
+                <Grid item>
+                  <Link to='/login'>
+                    {"Already a user? Log In"}
+                  </Link>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+    </ThemeProvider>
   )
 }
