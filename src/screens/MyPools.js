@@ -11,7 +11,6 @@ import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutli
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
 
 const defaultTheme = createTheme();
 
@@ -51,7 +50,7 @@ export default function MyPools() {
 
     useEffect(() => {
         async function authorize() {
-            const response = await fetch('http://localhost:5000/api/extractUserData', {
+            const response = await fetch('https://pool-pal-api.vercel.app/api/extractUserData', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -63,7 +62,7 @@ export default function MyPools() {
             setuserId(json.userId);
             console.log(json.userId);
 
-            const nextresponse = await fetch('http://localhost:5000/api/getpoolmsg', {
+            const nextresponse = await fetch('https://pool-pal-api.vercel.app/api/getpoolmsg', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -80,7 +79,7 @@ export default function MyPools() {
     const handleEdit = async (e) => {
 
         e.preventDefault();
-        const response = await fetch('http://localhost:5000/api/editpmsg', {
+        const response = await fetch('https://pool-pal-api.vercel.app/api/editpmsg', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -121,7 +120,7 @@ export default function MyPools() {
     }
 
     const handleDelete = async (msgid) => {
-        const response = await fetch('http://localhost:5000/api/deletepmsg', {
+        const response = await fetch('https://pool-pal-api.vercel.app/api/deletepmsg', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

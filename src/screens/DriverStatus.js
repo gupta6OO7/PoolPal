@@ -30,7 +30,7 @@ export default function DriverStatus() {
 
   useEffect(() => {
     async function authorize() {
-      const response = await fetch('http://localhost:5000/api/extractUserData', {
+      const response = await fetch('https://pool-pal-api.vercel.app/api/extractUserData', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -53,7 +53,7 @@ export default function DriverStatus() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('http://localhost:5000/api/statusUpdate', {
+    const response = await fetch('https://pool-pal-api.vercel.app/api/statusUpdate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

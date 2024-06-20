@@ -29,7 +29,7 @@ export default function PoolReq() {
 
   useEffect(() => {
     async function authorize() {
-      const response = await fetch('http://localhost:5000/api/extractUserData', {
+      const response = await fetch('https://pool-pal-api.vercel.app/api/extractUserData', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -56,7 +56,7 @@ export default function PoolReq() {
   const handleSubmit = async (e) => {
 
     e.preventDefault();
-    const response = await fetch('http://localhost:5000/api/createpmsg', {
+    const response = await fetch('https://pool-pal-api.vercel.app/api/createpmsg', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -43,7 +43,7 @@ export default function Chats(props) {
 
     useEffect(() => {
         async function authorize() {
-            const response = await fetch('http://localhost:5000/api/extractUserData', {
+            const response = await fetch('https://pool-pal-api.vercel.app/api/extractUserData', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -55,7 +55,7 @@ export default function Chats(props) {
             setcurrEmail(json.userEmail);
             setuserType(json.userType);
 
-            const nextresponse = await fetch('http://localhost:5000/api/getuserchatrooms', {
+            const nextresponse = await fetch('https://pool-pal-api.vercel.app/api/getuserchatrooms', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -69,7 +69,7 @@ export default function Chats(props) {
     }, []);
 
     useEffect(() => {
-        const s = io("http://localhost:5000")
+        const s = io("https://pool-pal-api.vercel.app/")
         setSocket(s)
 
         return () => {
@@ -103,7 +103,7 @@ export default function Chats(props) {
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
-        const response = await fetch('http://localhost:5000/api/sendmessage', {
+        const response = await fetch('https://pool-pal-api.vercel.app/api/sendmessage', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -125,7 +125,7 @@ export default function Chats(props) {
     const getchat = async (chatid, mailId) => {
         setchatnum(chatid);
         setreq_mailid(mailId);
-        const response = await fetch('http://localhost:5000/api/getchat', {
+        const response = await fetch('https://pool-pal-api.vercel.app/api/getchat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -144,7 +144,7 @@ export default function Chats(props) {
             alert('Enter date first');
         }
         else {
-            const response = await fetch('http://localhost:5000/api/updatestatus', {
+            const response = await fetch('https://pool-pal-api.vercel.app/api/updatestatus', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

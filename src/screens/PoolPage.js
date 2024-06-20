@@ -26,7 +26,7 @@ export default function PoolPage() {
 
     useEffect(() => {
         async function authorize() {
-            const response = await fetch('http://localhost:5000/api/extractUserData', {
+            const response = await fetch('https://pool-pal-api.vercel.app/api/extractUserData', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -38,7 +38,7 @@ export default function PoolPage() {
             setuserId(json.userId);
             console.log(json.userId);
 
-            const nextresponse = await fetch('http://localhost:5000/api/getpoolmsg', {
+            const nextresponse = await fetch('https://pool-pal-api.vercel.app/api/getpoolmsg', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -52,7 +52,7 @@ export default function PoolPage() {
     }, []);
 
     const joinpool = async (msgid, ownerId) => {
-        const response = await fetch('http://localhost:5000/api/createchatroom', {
+        const response = await fetch('https://pool-pal-api.vercel.app/api/createchatroom', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

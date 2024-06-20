@@ -23,7 +23,7 @@ export default function DriverPage() {
 
     useEffect(() => {
         async function authorize() {
-            const response = await fetch('http://localhost:5000/api/extractUserData', {
+            const response = await fetch('https://pool-pal-api.vercel.app/api/extractUserData', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -33,7 +33,7 @@ export default function DriverPage() {
             const json = await response.json()
             setuserId(json.userId);
 
-            const nextresponse = await fetch('http://localhost:5000/api/getdriverdata', {
+            const nextresponse = await fetch('https://pool-pal-api.vercel.app/api/getdriverdata', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -47,7 +47,7 @@ export default function DriverPage() {
     }, []);
 
     const bookCab = async (ownerId) => {
-        const response = await fetch('http://localhost:5000/api/createchatroom', {
+        const response = await fetch('https://pool-pal-api.vercel.app/api/createchatroom', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
