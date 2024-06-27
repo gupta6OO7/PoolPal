@@ -12,12 +12,14 @@ import { orange } from '@mui/material/colors';
 import ChatIcon from '@mui/icons-material/Chat';
 import LockIcon from '@mui/icons-material/Lock';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Button from '@mui/material/Button';
 
 const defaultTheme = createTheme();
 
 export default function PoolPage() {
 
     const [data, setdata] = useState([]);
+    const [showpoolpageData, setshowpoolpageData] = useState(false);
     const [searchfrom, setsearchfrom] = useState('');
     const [searchto, setsearchto] = useState('');
     const [searchvtype, setsearchvtype] = useState('');
@@ -37,19 +39,30 @@ export default function PoolPage() {
             const json = await response.json()
             setuserId(json.userId);
             console.log(json.userId);
-
-            const nextresponse = await fetch('https://pool-pal-api.vercel.app/api/getpoolmsg', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-
-            const nextjson = await nextresponse.json()
-            setdata(nextjson.data);
         }
         authorize();
     }, []);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const nextresponse = await fetch('https://pool-pal-api.vercel.app/api/getpoolmsg', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ fromloc: searchfrom, toloc: searchto })
+        })
+
+        const nextjson = await nextresponse.json()
+
+        console.log(nextjson);
+
+        if (nextjson.status === 'ok') {
+            setdata(nextjson.data);
+            setshowpoolpageData(true);
+        }
+    }
 
     const joinpool = async (msgid, ownerId) => {
         const response = await fetch('https://pool-pal-api.vercel.app/api/createchatroom', {
@@ -88,42 +101,60 @@ export default function PoolPage() {
                 noValidate
                 autoComplete="off"
             >
-                <TextField
-                    id="from"
-                    label="From"
-                    variant="outlined"
-                    value={searchfrom}
-                    onChange={(e) => { setsearchfrom(e.target.value) }}
-                />
-                <TextField
-                    id="to"
-                    label="To"
-                    variant="outlined"
-                    value={searchto}
-                    onChange={(e) => { setsearchto(e.target.value) }}
-                />
-                <TextField
-                    id="vtype"
-                    label="Vehicle Type"
-                    variant="outlined"
-                    value={searchvtype}
-                    onChange={(e) => { setsearchvtype(e.target.value) }}
-                />
+                {
+                    (!showpoolpageData) ?
+                        <Box sx={{
+                            my: 8,
+                            mx: 4,
+                            display: 'flex',
+                            flexDirection: 'column'
+                        }}>
+                            <TextField
+                                id="fromloc"
+                                label="From"
+                                variant="outlined"
+                                value={searchfrom}
+                                onChange={(e) => { setsearchfrom(e.target.value) }}
+                            />
+                            <br></br>
+                            <TextField
+                                id="toloc"
+                                label="To"
+                                variant="outlined"
+                                value={searchto}
+                                onChange={(e) => { setsearchto(e.target.value) }}
+                            />
+                            <Button
+                                onClick={handleSubmit}
+                                fullWidth
+                                padding="10px"
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Search
+                            </Button>
+                        </Box>
+                        :
+                        <TextField
+                            id="vtype"
+                            label="Vehicle Type"
+                            variant="outlined"
+                            value={searchvtype}
+                            onChange={(e) => { setsearchvtype(e.target.value) }}
+                        />
+                }
             </Box>
 
             <br />
 
             <Box sx={{ flexGrow: 1 }}>
-                <Grid container spacing={2}>
-                    {data.filter((i) => ((i.fromloc.toLowerCase().includes(searchfrom.toLocaleLowerCase()))
-                        && (i.toloc.toLowerCase().includes(searchto.toLocaleLowerCase()))
-                        && (i.vtype.toLowerCase().includes(searchvtype.toLocaleLowerCase()))
-                    ))
+                <Grid container spacing={25}>
+                    {data.filter((i) => ((i.vtype.toLowerCase().includes(searchvtype.toLocaleLowerCase()))))
                         .map(i => {
                             return (
                                 <Grid xs={4}>
                                     <ThemeProvider theme={defaultTheme}>
-                                        <Card variant="outlined">
+                                        <Card variant="outlined" sx={{minWidth: '300px'}}>
                                             <CardHeader
                                                 avatar={
                                                     <Avatar sx={{ bgcolor: orange[400] }} aria-label="recipe">
